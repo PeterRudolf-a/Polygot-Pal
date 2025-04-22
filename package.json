@@ -1,0 +1,12 @@
+{
+  "name": "polyglot-pal",
+  "private": true,
+  "scripts": {
+  "dev": "concurrently \"npm run dev --prefix client\" \"npm run server\"",
+  "server": "cd server && venv\\Scripts\\python.exe -m uvicorn main:app --reload",
+  "client": "npm start --prefix client"
+},
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
