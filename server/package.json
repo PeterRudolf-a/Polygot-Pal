@@ -2,6 +2,7 @@
   "name": "polyglot-pal-server",
   "version": "1.0.0",
   "scripts": {
-    "dev": "venv\\Scripts\\python.exe -m uvicorn app.main:app --reload"
+    "dev": "venv\\Scripts\\python.exe -m uvicorn app.main:app --reload",
+    "install-pip": "pip install -r requirements.txt"
   }
 }
