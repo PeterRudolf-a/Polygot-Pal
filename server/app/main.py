@@ -1,16 +1,23 @@
 from fastapi import FastAPI, HTTPException # Import FastAPI and HTTPException
 from app.models.user import UserCreate, UserLogin # Import UserCreate and UserLogin models
 from app.db.db import users_collection
+from strawberry.fastapi import GraphQLRouter
+import strawberry
 from app.auth.auth import hash_password, verify_password
 from app.auth.jwt_utils import create_access_token
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import translation
 from dotenv import load_dotenv
 import os
+from app.graphql.schema import schema
 
 load_dotenv()
 
+graphql_app = GraphQLRouter(schema)
+
 app = FastAPI()
+
+app.include_router(graphql_app, prefix="/graphql")
 
 app.include_router(translation.router, prefix="/api", tags=["translation"])
 
