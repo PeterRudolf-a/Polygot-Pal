@@ -1,48 +1,47 @@
-import { useState, useEffect } from "react";
-import { AuthContext } from "./AuthContextObj";
-import jwtDecode from "jwt-decode";
+import React, { createContext, useState, useEffect } from 'react';
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER, CREATE_USER } from '../graphql/mutations';
+import jwtDecode from 'jwt-decode';
+
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
+
+  const [loginMutation] = useMutation(LOGIN_USER);
+  const [signupMutation] = useMutation(CREATE_USER);
 
   useEffect(() => {
     if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp * 1000 < Date.now()) {
-          console.warn("Token expired");
-          logout();
-        } else {
-          setUser({
-            id: decoded.sub,
-            name: decoded.name,
-            email: decoded.email,
-            exp: decoded.exp,
-          });
-        }
-      } catch (err) {
-        console.error("Invalid token:", err);
+      const decoded = jwtDecode(token);
+      if (decoded.exp * 1000 < Date.now()) {
         logout();
+      } else {
+        setUser({ id: decoded.sub, name: decoded.name, email: decoded.email });
       }
-    } else {
-      setUser(null);
     }
   }, [token]);
 
-  const login = (newToken) => {
-    localStorage.setItem("token", newToken);
+  const login = async (email, password) => {
+    const { data } = await loginMutation({ variables: { email, password } });
+    const newToken = data.loginUser.token;
+    localStorage.setItem('token', newToken);
     setToken(newToken);
   };
 
+  const signup = async (name, email, password) => {
+    await signupMutation({ variables: { name, email, password } });
+  };
+
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

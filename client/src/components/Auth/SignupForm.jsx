@@ -1,30 +1,32 @@
-import { useState } from 'react';
-import { signup } from '../../services/authService';
-
-export default function SignupForm() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await signup(name, email, password);
-      setMessage(res.message);
-    } catch (err) {
-      setMessage(err.message);
-    }
-  };
-
+export default function SignupForm({ name, setName, email, setEmail, password, setPassword, handleSubmit, message }) {
   return (
-    <form onSubmit={handleSignup}>
-      <h2>Sign Up</h2>
-      <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
-      <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button type="submit">Create Account</button>
-      {message && <p>{message}</p>}
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <input
+        placeholder="Name"
+        className="w-full border p-2 rounded"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        required
+      />
+      <input
+        placeholder="Email"
+        className="w-full border p-2 rounded"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        className="w-full border p-2 rounded"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit" className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">
+        Sign Up
+      </button>
+      {message && <p className="text-green-600">{message}</p>}
     </form>
   );
 }

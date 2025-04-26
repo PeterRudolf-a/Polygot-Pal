@@ -1,12 +1,33 @@
+import { useState } from "react";
+import { useAuth } from "../context/UseAuth";
+import { useNavigate } from "react-router-dom";
 import LoginForm from "../components/Auth/LoginForm";
 
-const Login = () => {
-  return (
-    <div className="max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4">Log In</h2>
-      <LoginForm />
-    </div>
-  );
-};
+export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-export default Login;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login(email, password);
+      navigate("/vocab");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <LoginForm
+      email={email}
+      setEmail={setEmail}
+      password={password}
+      setPassword={setPassword}
+      handleSubmit={handleSubmit}
+      error={error}
+    />
+  );
+}

@@ -5,6 +5,11 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Vocab from "./pages/Vocab";
+import Dashboard from "./pages/Dashboard";
+import Flashcards from "./pages/Flashcards";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 
 import PrivateRoute from "./routes/PrivateRoute";
 
@@ -22,6 +27,22 @@ function App() {
             element={
               <PrivateRoute>
                 <Vocab />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/flashcards"
+            element={
+              <PrivateRoute>
+                <Flashcards />
               </PrivateRoute>
             }
           />
