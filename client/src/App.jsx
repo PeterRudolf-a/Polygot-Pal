@@ -10,7 +10,6 @@ import Flashcards from "./pages/Flashcards";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
 import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {
@@ -38,14 +37,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route
-            path="/flashcards"
-            element={
-              <PrivateRoute>
-                <Flashcards />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/flashcards/*" element={<Flashcards />} />
         </Routes>
       </div>
     </>

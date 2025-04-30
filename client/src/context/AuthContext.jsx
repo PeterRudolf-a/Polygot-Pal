@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER, CREATE_USER } from '../graphql/mutations';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext();
 

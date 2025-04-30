@@ -4,11 +4,15 @@ import App from "./App";
 import { ApolloProvider } from '@apollo/client';
 import client from './graphql/client';
 import { AuthProvider } from "./context/AuthContext";
+import { BrowserRouter } from "react-router-dom";
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <ApolloProvider client={client}>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </ApolloProvider>
+  <BrowserRouter>
+    <ApolloProvider client={client}>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ApolloProvider>
+  </BrowserRouter>
 );

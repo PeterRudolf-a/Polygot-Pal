@@ -2,10 +2,14 @@
   "name": "polyglot-pal",
   "private": true,
   "scripts": {
-  "dev": "concurrently \"npm run dev --prefix client\" \"npm run server\"",
-  "server": "cd server && venv\\Scripts\\python.exe -m uvicorn main:app --reload",
-  "client": "npm start --prefix client"
-},
+    "client": "npm --prefix client run dev",
+    "server": "npm --prefix server run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client:build": "npm --prefix client run build",
+    "client:preview": "npm --prefix client run preview",
+    "build": "npm run client:build",
+    "preview": "npm run client:preview"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
