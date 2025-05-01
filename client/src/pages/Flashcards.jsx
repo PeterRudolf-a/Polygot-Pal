@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import FlashcardSetup from '../components/FlashcardSetup';
 import FlashcardGame from '../components/FlashcardGame';
 import FlashcardResult from '../components/FlashcardResult';
+import './styles.css';
 
 export default function Flashcards() {
   return (

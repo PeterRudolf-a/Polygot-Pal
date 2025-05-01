@@ -1,33 +1,48 @@
-import { useState } from "react";
-import { useAuth } from "../context/UseAuth";
-import { useNavigate } from "react-router-dom";
-import LoginForm from "../components/Auth/LoginForm";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
-export default function Login() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
+const Login = () => {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await login(email, password);
-      navigate("/vocab");
-    } catch (err) {
-      setError(err.message);
-    }
+    login(email, password);
   };
 
   return (
-    <LoginForm
-      email={email}
-      setEmail={setEmail}
-      password={password}
-      setPassword={setPassword}
-      handleSubmit={handleSubmit}
-      error={error}
-    />
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-white px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md"
+      >
+        <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
+          Log In
+        </h2>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-3 border rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 border rounded-xl mb-6 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <button
+          type="submit"
+          className="w-full bg-indigo-500 text-white py-3 rounded-xl hover:bg-indigo-600 transition"
+        >
+          Log In
+        </button>
+      </form>
+    </div>
   );
-}
+};
+
+export default Login;

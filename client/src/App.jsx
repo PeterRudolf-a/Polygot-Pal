@@ -8,8 +8,6 @@ import Vocab from "./pages/Vocab";
 import Dashboard from "./pages/Dashboard";
 import Flashcards from "./pages/Flashcards";
 import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-
 import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {

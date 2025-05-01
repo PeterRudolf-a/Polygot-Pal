@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/UseAuth';
 import { useQuery } from '@apollo/client';
 import { GET_USER_TRANSLATIONS } from '../graphql/queries';
+import './styles.css';
 
 export default function Vocab() {
   const { user, token } = useAuth();
