@@ -99,3 +99,7 @@ a:hover {
 .auth-form button:hover {
   background-color: #4f46e5;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
