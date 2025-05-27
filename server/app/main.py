@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException # Import FastAPI and HTTPException
-from app.models.user import UserCreate, UserLogin # Import UserCreate and UserLogin models
+from fastapi import FastAPI, HTTPException
+from app.models.user import UserCreate, UserLogin
 from app.db.db import users_collection
 from strawberry.fastapi import GraphQLRouter
 import strawberry
@@ -17,11 +17,19 @@ graphql_app = GraphQLRouter(schema)
 
 app = FastAPI()
 
-app.include_router(graphql_app, prefix="/graphql")
+# ✅ CORS middleware setup
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+# ✅ Routers
+app.include_router(graphql_app, prefix="/graphql")
 app.include_router(translation.router, prefix="/api", tags=["translation"])
 
-# Access like this
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 @app.get("/")

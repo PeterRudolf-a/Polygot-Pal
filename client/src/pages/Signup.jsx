@@ -18,6 +18,7 @@ const Signup = () => {
         <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">Sign Up</h2>
         <input
           type="text"
+          name="name"
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -25,6 +26,7 @@ const Signup = () => {
         />
         <input
           type="email"
+          name="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -32,6 +34,7 @@ const Signup = () => {
         />
         <input
           type="password"
+          name="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

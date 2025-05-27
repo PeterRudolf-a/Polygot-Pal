@@ -33,11 +33,20 @@ class UserQuery:
 @strawberry.type
 class UserMutation:
     @strawberry.mutation
-    def create_user(self, name: str, email: str, password: str) -> UserType:
+    def create_user(self, name: str, email: str, password: str) -> AuthPayload:
+        existing_user = users_collection.find_one({"email": email})
+        if existing_user:
+            raise Exception("Email already registered")
+
         hashed_pw = hash_password(password)
         new_user = {"name": name, "email": email, "hashed_password": hashed_pw}
         result = users_collection.insert_one(new_user)
-        return UserType(id=str(result.inserted_id), name=name, email=email)
+
+        token = create_access_token({"user_id": str(result.inserted_id)})
+        return AuthPayload(
+            token=token,
+            user=UserType(id=str(result.inserted_id), name=name, email=email)
+        )
 
     @strawberry.mutation
     def login_user(self, email: str, password: str) -> AuthPayload:

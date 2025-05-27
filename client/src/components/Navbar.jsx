@@ -17,8 +17,9 @@ const Navbar = () => {
         {user ? (
           <>
             <span className="text-white hidden sm:inline">
-              Hi, {user.name.split(" ")[0]}
+              Hi, {user?.name?.split(" ")[0] || "User"}
             </span>
+
             <Link
               to="/vocab"
               className="px-3 py-2 rounded hover:bg-blue-700 transition duration-200"
