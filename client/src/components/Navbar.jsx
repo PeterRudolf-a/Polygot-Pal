@@ -21,6 +21,18 @@ const Navbar = () => {
             </span>
 
             <Link
+              to="/dashboard"
+              className="px-3 py-2 rounded hover:bg-blue-700 transition duration-200"
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/flashcards"
+              className="px-3 py-2 rounded hover:bg-blue-700 transition duration-200"
+            >
+              Flashcards
+            </Link>
+            <Link
               to="/vocab"
               className="px-3 py-2 rounded hover:bg-blue-700 transition duration-200"
             >

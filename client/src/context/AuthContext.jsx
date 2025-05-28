@@ -2,10 +2,13 @@ import React, { createContext, useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { LOGIN_USER, CREATE_USER } from "../graphql/mutations";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
+
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState(null);
 
@@ -50,22 +53,21 @@ export const AuthProvider = ({ children }) => {
       const { data } = await signupMutation({
         variables: { name, email, password },
       });
-      // Adjusted depending on backend fix above
-      // For backend returning token:
       const newToken = data.createUser.token;
+
+      if (!newToken) {
+        console.error("No token returned from signup.");
+        return;
+      }
+
       localStorage.setItem("token", newToken);
       setToken(newToken);
       const decoded = jwtDecode(newToken);
       setUser({ id: decoded.sub, name: decoded.name, email: decoded.email });
-      window.location.href = "/dashboard";
 
-      // For backend NOT returning token, replace with:
-      // alert("Signup successful! Please login.");
-      // window.location.href = '/login';
+      navigate("/dashboard"); // Better than window.location.href
     } catch (err) {
       console.error("Signup error:", err);
-      const message = err?.graphQLErrors?.[0]?.message || "Signup failed.";
-      alert(message);
     }
   };
 

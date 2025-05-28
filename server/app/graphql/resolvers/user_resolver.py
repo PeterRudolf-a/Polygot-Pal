@@ -7,27 +7,19 @@ from app.graphql.types.user_type import UserType, AuthPayload
 
 @strawberry.type
 class UserQuery:
-    @strawberry.field
-    def get_current_user(self, token: str) -> UserType:
-        try:
-            # Decode the token to get user information
-            decoded = decode_token(token)
-            user_id = decoded["user_id"]
+    @strawberry.mutation
+    def create_user(self, name: str, email: str, password: str) -> AuthPayload:
+        hashed_pw = hash_password(password)
+        new_user = {"name": name, "email": email, "hashed_password": hashed_pw}
+        result = users_collection.insert_one(new_user)
+        user_id = str(result.inserted_id)
 
-            # Fetch user from database
-            user_data = users_collection.find_one({"_id": user_id})
+        token = create_access_token({"sub": user_id, "name": name, "email": email})
+        return AuthPayload(
+            token=token,
+            user=UserType(id=user_id, name=name, email=email)
+        )
 
-            if not user_data:
-                raise Exception("User not found")
-            
-            return UserType(
-                id=str(user_data["_id"]),
-                name=user_data["name"],
-                email=user_data["email"]
-            )
-
-        except Exception as e:
-            raise Exception(f"Error getting current user: {str(e)}")
 
 
 @strawberry.type
