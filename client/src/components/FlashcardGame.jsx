@@ -4,6 +4,8 @@ import { useMutation } from "@apollo/client";
 import { TRANSLATE } from "../graphql/mutations";
 import { motion } from "framer-motion";
 
+const MotionDiv = motion.div;
+
 const getRandomWords = (count) => {
   const words = [
     "apple",
@@ -40,22 +42,20 @@ export default function FlashcardGame() {
   useEffect(() => {
     const fetchCards = async () => {
       const words = getRandomWords(Number(count));
-      const results = await Promise.all(
-        words.map((word) =>
-          translate({ variables: { text: word, sourceLang, targetLang } })
-        )
+      const promises = words.map((word) =>
+        translate({ variables: { text: word, sourceLang, targetLang } })
       );
+      const results = await Promise.all(promises);
       const translated = results.map((res, i) => ({
         original: words[i],
         translated: res.data.translate.translatedText,
       }));
       setCards(translated);
     };
-
     fetchCards();
   }, [count, sourceLang, targetLang, translate]);
 
-  const handleReveal = () => {
+  const handleFlip = () => {
     setFlipped(true);
   };
 
@@ -74,83 +74,66 @@ export default function FlashcardGame() {
     }
   };
 
-  const handleMarkCorrect = () => {
-    setScore(score + 1);
-    handleNext();
+  const handleGuess = (isCorrect) => {
+    if (isCorrect) {
+      setScore((prev) => prev + 1);
+    } else {
+      setIncorrectAnswers((prev) => [
+        ...prev,
+        {
+          question: cards[index].original,
+          correctAnswer: cards[index].translated,
+        },
+      ]);
+    }
+    handleFlip();
   };
 
-  const handleMarkIncorrect = () => {
-    setIncorrectAnswers((prev) => [
-      ...prev,
-      {
-        question: cards[index].original,
-        correctAnswer: cards[index].translated,
-      },
-    ]);
-    handleNext();
-  };
-
-  if (cards.length === 0)
-    return <p className="text-center mt-10">Loading cards...</p>;
+  if (cards.length === 0) return <p>Loading cards...</p>;
 
   const currentCard = cards[index];
 
   return (
-    <div className="max-w-md mx-auto mt-10 text-center space-y-6">
-      <h2 className="text-xl font-semibold">
+    <div className="max-w-md mx-auto mt-10 space-y-6">
+      <h2 className="text-xl font-bold text-center mb-4">
         Flashcard {index + 1} of {cards.length}
       </h2>
 
-      {/* Flip card using motion.div */}
-      <div className="w-full h-48 perspective">
-        <motion.div
-          className="relative w-full h-full"
-          animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={{ duration: 0.6 }}
-          style={{
-            transformStyle: "preserve-3d",
-            position: "relative",
-          }}
-        >
-          <motion.div
-            className="absolute w-full h-full flex items-center justify-center bg-white text-2xl font-bold rounded shadow"
-            style={{ backfaceVisibility: "hidden" }}
-          >
-            {currentCard.original}
-          </motion.div>
-
-          <motion.div
-            className="absolute w-full h-full flex items-center justify-center bg-green-100 text-2xl font-bold rounded shadow"
-            style={{
-              transform: "rotateY(180deg)",
-              backfaceVisibility: "hidden",
-            }}
-          >
-            {currentCard.translated}
-          </motion.div>
-        </motion.div>
-      </div>
+      <MotionDiv
+        className="w-full h-48 bg-white rounded-xl shadow-lg flex items-center justify-center text-2xl font-semibold border border-gray-300 cursor-pointer transition-transform duration-700"
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        style={{
+          transformStyle: "preserve-3d",
+          perspective: "1000px",
+          backgroundColor: "#f9fafb",
+        }}
+        onClick={!flipped ? handleFlip : undefined}
+      >
+        {flipped ? currentCard.translated : currentCard.original}
+      </MotionDiv>
 
       {!flipped ? (
-        <button
-          onClick={handleReveal}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-        >
-          Flip to Reveal
-        </button>
-      ) : (
-        <div className="space-x-4">
+        <div className="flex justify-center gap-4">
           <button
-            onClick={handleMarkCorrect}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            onClick={() => handleGuess(true)}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
           >
-            I got it right
+            I knew it
           </button>
           <button
-            onClick={handleMarkIncorrect}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            onClick={() => handleGuess(false)}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
-            I got it wrong
+            I didn’t know
+          </button>
+        </div>
+      ) : (
+        <div className="text-center">
+          <button
+            onClick={handleNext}
+            className="px-4 py-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Next
           </button>
         </div>
       )}
