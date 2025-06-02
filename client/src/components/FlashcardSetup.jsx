@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import LanguageDropdown from "./LanguageDropdown";
 
 export default function FlashcardSetup() {
   const [sourceLang, setSourceLang] = useState("en");
@@ -18,17 +19,15 @@ export default function FlashcardSetup() {
   return (
     <div className="max-w-md mx-auto mt-10 space-y-4 p-4">
       <h2 className="text-2xl font-bold text-center">Flashcard Setup</h2>
-      <input
-        placeholder="Source Language (e.g., en)"
+      <LanguageDropdown
+        label="Source Language"
         value={sourceLang}
-        onChange={(e) => setSourceLang(e.target.value)}
-        className="w-full p-2 border rounded"
+        onChange={setSourceLang}
       />
-      <input
-        placeholder="Target Language (e.g., fr)"
+      <LanguageDropdown
+        label="Target Language"
         value={targetLang}
-        onChange={(e) => setTargetLang(e.target.value)}
-        className="w-full p-2 border rounded"
+        onChange={setTargetLang}
       />
       <input
         type="number"
@@ -37,6 +36,7 @@ export default function FlashcardSetup() {
         value={count}
         onChange={(e) => setCount(e.target.value)}
         className="w-full p-2 border rounded"
+        placeholder="Number of flashcards"
       />
       <button
         onClick={handleStart}

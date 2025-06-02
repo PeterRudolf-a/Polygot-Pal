@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Vocab from "./pages/Vocab";
 import Dashboard from "./pages/Dashboard";
 import Flashcards from "./pages/Flashcards";
+import FlashcardResults from "./pages/FlashcardResults";
 import "./App.css";
 import PrivateRoute from "./routes/PrivateRoute";
 
@@ -36,6 +37,7 @@ function App() {
             }
           />
           <Route path="/flashcards/*" element={<Flashcards />} />
+          <Route path="/flashcard-results" element={<FlashcardResults />} />
         </Routes>
       </div>
     </>

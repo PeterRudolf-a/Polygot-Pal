@@ -3,6 +3,7 @@ import { useMutation } from "@apollo/client";
 import { TRANSLATE, SAVE_TRANSLATION } from "../graphql/mutations";
 import { useAuth } from "../context/UseAuth";
 import { useNavigate } from "react-router-dom";
+import LanguageDropdown from "../components/LanguageDropdown";
 
 export default function Dashboard() {
   const { user, token } = useAuth();
@@ -27,6 +28,7 @@ export default function Dashboard() {
         variables: { text, sourceLang, targetLang },
       });
       setTranslatedResult(data.translate);
+      setMessage(""); // Clear any old message
     } catch (err) {
       console.error("Translation failed", err);
     }
@@ -34,7 +36,6 @@ export default function Dashboard() {
 
   const handleSaveTranslation = async () => {
     if (!translatedResult) return;
-
     try {
       const { data } = await saveTranslation({
         variables: {
@@ -68,18 +69,20 @@ export default function Dashboard() {
           required
         />
         <div className="flex space-x-4">
-          <input
-            className="flex-1 border border-gray-300 p-3 rounded focus:outline-none"
-            placeholder="Source Lang (e.g., en)"
-            value={sourceLang}
-            onChange={(e) => setSourceLang(e.target.value)}
-          />
-          <input
-            className="flex-1 border border-gray-300 p-3 rounded focus:outline-none"
-            placeholder="Target Lang (e.g., fr)"
-            value={targetLang}
-            onChange={(e) => setTargetLang(e.target.value)}
-          />
+          <div className="flex-1">
+            <LanguageDropdown
+              label="Source Language"
+              value={sourceLang}
+              onChange={setSourceLang}
+            />
+          </div>
+          <div className="flex-1">
+            <LanguageDropdown
+              label="Target Language"
+              value={targetLang}
+              onChange={setTargetLang}
+            />
+          </div>
         </div>
         <button
           type="submit"
@@ -90,18 +93,17 @@ export default function Dashboard() {
         </button>
       </form>
 
-      {error && <p className="text-red-500 mt-4">❗ Error translating text.</p>}
+      {error && <p className="text-red-500 mt-4">❗ Error translating</p>}
 
       {translatedResult && (
-        <div className="mt-8 border p-4 rounded bg-gray-50 shadow-sm">
-          <h3 className="text-xl font-semibold mb-2">Translation Result</h3>
-          <p className="text-lg">{translatedResult.translatedText}</p>
-          <p className="text-sm text-gray-500 mt-1 italic">
-            {translatedResult.source} → {translatedResult.target}
-          </p>
+        <div className="mt-6 space-y-4">
+          <div className="p-4 bg-gray-100 rounded">
+            <p className="font-semibold">Translation:</p>
+            <p>{translatedResult.translatedText}</p>
+          </div>
           <button
             onClick={handleSaveTranslation}
-            className="mt-4 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 w-full transition duration-200"
+            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
           >
             Save Translation
           </button>
@@ -109,7 +111,7 @@ export default function Dashboard() {
       )}
 
       {message && (
-        <p className="mt-6 text-center text-green-600 font-medium">{message}</p>
+        <p className="mt-4 text-center text-sm text-gray-700">{message}</p>
       )}
     </div>
   );

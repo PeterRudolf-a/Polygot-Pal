@@ -21,3 +21,15 @@ export const GET_USER_TRANSLATIONS = gql`
     }
   }
 `;
+
+export const GET_FLASHCARD_RESULTS = gql`
+  query GetFlashcardResults($token: String!) {
+    getFlashcardResults(token: $token) {
+      id
+      date
+      language
+      correct
+      total
+    }
+  }
+`;

@@ -3,3 +3,5 @@ A simple and collaborative app that allows users to translate text, save transla
 
 # Credits
 Idea from Bootcamp: FSF-PT-EAST-OCTOBER-100724-MTTH-CONS(B) Project 3 group member Javier Valdez. (https://github.com/ForfietBlock95).
+
+Translation API: MyMemory API https://mymemory.translated.net/ 
