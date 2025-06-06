@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const CREATE_USER = gql`
   mutation createUser($name: String!, $email: String!, $password: String!) {
@@ -12,7 +12,6 @@ export const CREATE_USER = gql`
     }
   }
 `;
-
 
 export const LOGIN_USER = gql`
   mutation loginUser($email: String!, $password: String!) {
@@ -28,7 +27,11 @@ export const LOGIN_USER = gql`
 `;
 
 export const TRANSLATE = gql`
-  mutation translate($text: String!, $sourceLang: String!, $targetLang: String!) {
+  mutation translate(
+    $text: String!
+    $sourceLang: String!
+    $targetLang: String!
+  ) {
     translate(text: $text, sourceLang: $sourceLang, targetLang: $targetLang) {
       translatedText
       match
@@ -57,5 +60,23 @@ export const SAVE_TRANSLATION = gql`
       text
       translatedText
     }
+  }
+`;
+
+export const SAVE_FLASHCARD_RESULT = gql`
+  mutation SaveFlashcardResult(
+    $token: String!
+    $correct: Int!
+    $total: Int!
+    $language: String!
+    $incorrectWords: [String!]!
+  ) {
+    saveFlashcardResult(
+      token: $token
+      correct: $correct
+      total: $total
+      language: $language
+      incorrectWords: $incorrectWords
+    )
   }
 `;

@@ -3,6 +3,8 @@ import strawberry
 
 @strawberry.type
 class TranslationType:
+    id: strawberry.ID
+    text: str
     translated_text: str
     match: float
     source: str

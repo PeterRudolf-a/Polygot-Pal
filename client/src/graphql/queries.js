@@ -33,3 +33,16 @@ export const GET_FLASHCARD_RESULTS = gql`
     }
   }
 `;
+
+export const GET_FLASHCARD_SESSION = gql`
+  query GetFlashcardSession($id: ID!) {
+    getFlashcardSession(id: $id) {
+      id
+      language
+      incorrectWords
+      correctWords
+      totalWords
+      date
+    }
+  }
+`;
