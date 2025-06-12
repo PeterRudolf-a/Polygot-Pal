@@ -1,11 +1,13 @@
 # app/graphql/resolvers/translation_resolver.py
-import strawberry
-from app.db.db import translations_collection
-from app.services.translation import translate_text
-from app.graphql.types.translation_type import TranslationType
-from app.auth.jwt_utils import decode_token
-from datetime import datetime
+import strawberry # importing strawberry for GraphQL schema creation
+import uuid # importing uuid for generating unique IDs
+from app.db.db import translations_collection # importing translations_collection from the database module
+from app.services.translation import translate_text # importing translate_text service for translation functionality
+from app.graphql.types.translation_type import TranslationType # importing TranslationType for defining the GraphQL type
+from app.auth.jwt_utils import decode_token # importing decode_token for JWT token decoding
+from datetime import datetime, timezone # importing datetime and timezone for timestamp handling
 
+# GraphQL Query and Mutation for Translation
 @strawberry.type
 class TranslationQuery:
     @strawberry.field
@@ -17,6 +19,7 @@ class TranslationQuery:
             # Fetch translations from the database
             translations = translations_collection.find({"user_id": user_id})
 
+            # Convert MongoDB cursor to list of TranslationType
             return [
                 TranslationType(
                     id=str(translation["_id"]),
@@ -31,18 +34,23 @@ class TranslationQuery:
             raise Exception(f"Error fetching translations: {str(e)}")
 
 
+# GraphQL Mutation for Translation
 @strawberry.type
 class TranslationMutation:
     @strawberry.mutation
     def translate(self, text: str, source_lang: str, target_lang: str) -> TranslationType:
-        response = translate_text(text, source_lang, target_lang)
+        response = translate_text(text, source_lang, target_lang) # Call the translation service
+        # Ensure the response contains the expected fields
         return TranslationType(
+            id=str(uuid.uuid4()),
+            text=text,
             translated_text=response["translated_text"],
             match=response["match"],
-            source=response["source"],
-            target=response["target"]
+            source_lang=response["source"],       # ✅ fixed
+            target_lang=response["target"]        # ✅ fixed
         )
-    
+
+    # GraphQL Mutation to save a translation
     @strawberry.mutation
     def save_translation(self, token: str, text: str, translated_text: str, source_lang: str, target_lang: str) -> TranslationType:
         try:
@@ -56,10 +64,11 @@ class TranslationMutation:
                 "translated_text": translated_text,
                 "source_lang": source_lang,
                 "target_lang": target_lang,
-                "timestamp": datetime.now(datetime.timezone.utc)
+                "timestamp": datetime.now(timezone.utc)
             }
             result = translations_collection.insert_one(translation)
 
+            # Return the saved translation as a TranslationType
             return TranslationType(
                 id=str(result.inserted_id),
                 text=text,

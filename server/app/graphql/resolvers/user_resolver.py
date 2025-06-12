@@ -14,7 +14,8 @@ class UserQuery:
         result = users_collection.insert_one(new_user)
         user_id = str(result.inserted_id)
 
-        token = create_access_token({"sub": user_id, "name": name, "email": email})
+        token = create_access_token({"user_id": user_id, "name": name, "email": email})
+
         return AuthPayload(
             token=token,
             user=UserType(id=user_id, name=name, email=email)
@@ -46,7 +47,8 @@ class UserMutation:
         if not user or not verify_password(password, user["hashed_password"]):
             raise Exception("Invalid credentials")
 
-        token = create_access_token({"sub": str(user["_id"])})
+        token = create_access_token({"user_id": str(user["_id"])})
+
         return AuthPayload(
             token=token,
             user=UserType(id=str(user["_id"]), name=user["name"], email=user["email"])
