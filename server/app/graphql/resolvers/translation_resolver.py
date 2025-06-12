@@ -39,42 +39,42 @@ class TranslationQuery:
 class TranslationMutation:
     @strawberry.mutation
     def translate(self, text: str, source_lang: str, target_lang: str) -> TranslationType:
-        response = translate_text(text, source_lang, target_lang) # Call the translation service
-        # Ensure the response contains the expected fields
+        response = translate_text(text, source_lang, target_lang)
         return TranslationType(
             id=str(uuid.uuid4()),
             text=text,
             translated_text=response["translated_text"],
             match=response["match"],
-            source_lang=response["source"],       # ✅ fixed
-            target_lang=response["target"]        # ✅ fixed
+            source_lang=response["source"],  # ✅ Fix key names
+            target_lang=response["target"]
         )
+
+
 
     # GraphQL Mutation to save a translation
     @strawberry.mutation
     def save_translation(self, token: str, text: str, translated_text: str, source_lang: str, target_lang: str) -> TranslationType:
-        try:
-            decoded = decode_token(token)
-            user_id = decoded["user_id"]
+        decoded = decode_token(token)
+        user_id = decoded.get("user_id")
+        if not user_id:
+            raise Exception("Error saving translation: invalid token")
 
-            # Save translation to database
-            translation = {
-                "user_id": user_id,
-                "text": text,
-                "translated_text": translated_text,
-                "source_lang": source_lang,
-                "target_lang": target_lang,
-                "timestamp": datetime.now(timezone.utc)
-            }
-            result = translations_collection.insert_one(translation)
+        translation_doc = {
+            "user_id": user_id,
+            "text": text,
+            "translated_text": translated_text,
+            "source_lang": source_lang,
+            "target_lang": target_lang,
+            "timestamp": datetime.now(timezone.utc)
+        }
+        res = translations_collection.insert_one(translation_doc)
 
-            # Return the saved translation as a TranslationType
-            return TranslationType(
-                id=str(result.inserted_id),
-                text=text,
-                translated_text=translated_text,
-                source_lang=source_lang,
-                target_lang=target_lang
-            )
-        except Exception as e:
-            raise Exception(f"Error saving translation: {str(e)}")
+        return TranslationType(
+            id=str(res.inserted_id),
+            text=text,
+            translated_text=translated_text,
+            match=None,  # optional since saved
+            source_lang=source_lang,
+            target_lang=target_lang
+        )
+

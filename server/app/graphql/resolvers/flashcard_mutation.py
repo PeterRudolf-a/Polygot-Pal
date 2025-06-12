@@ -1,7 +1,7 @@
 import strawberry
 from app.auth.jwt_utils import decode_token
 from datetime import datetime, timezone
-from app.db import flashcard_results_collection
+from app.db.db import flashcard_results_collection
 
 
 @strawberry.type
